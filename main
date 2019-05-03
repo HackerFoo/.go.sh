@@ -19,15 +19,19 @@ function __go:commands() {
     compgen -A function "__go:" | cut -d: -f 2 | tr '\n' ' '
 }
 
-function __go:update() {
-    SRC=`find ${GO_DIR} -type f ! -name '*~' ! -path '*.git*'`
-    source ${SRC}
-    stat -c '%n %y' ${SRC}
-}
 
 function __go:show() {
     declare -f __go:$1
 }
+function __go:update() {
+    pushd ${GO_DIR}/functions > /dev/null
+    SRC=`find * -type f ! -name '*~'`
+    source ${SRC}
+    stat -c '%n %y' ${SRC}
+    popd > /dev/null
 
-# update completions
-complete -W "`__go:commands`" go
+    # update completions
+    complete -W "`__go:commands`" go
+}
+
+go update > /dev/null
