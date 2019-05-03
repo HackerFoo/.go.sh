@@ -1,0 +1,68 @@
+# -*- mode: sh -*-
+
+function __go:sf() {
+    ( set -ex
+      cd ~/src/symbiflow-arch-defs
+      nix-shell ~/nix/sf-shell.nix )
+}
+
+function __go:bit2vivado() {
+    source ~/src/prjxray/database/artix7/settings.sh
+    source ~/src/prjxray/minitests/roi_harness/basys3-swbut.sh
+    ( set -ex
+    cat << 'EOF' > runme.tcl
+create_project -force -part $::env(XRAY_PART) design design
+
+read_verilog top_bit.v
+synth_design -top top
+write_checkpoint -force design_pre_force.dcp
+source top_bit.v.tcl
+
+create_clock -period 10.000 -name clk -waveform {0.000 5.000} [get_ports clk]
+
+set_property CFGBVS VCCO [current_design]
+set_property CONFIG_VOLTAGE 3.3 [current_design]
+set_property BITSTREAM.GENERAL.PERFRAMECRC YES [current_design]
+set_property IS_ENABLED 0 [get_drc_checks {LUTLP-1}]
+
+write_checkpoint -force design_pre_place.dcp
+place_design
+route_design
+
+write_checkpoint -force design.dcp
+write_bitstream -force design.bit
+save_project_as -force design.xpr
+EOF
+    ${XRAY_VIVADO} -source runme.tcl
+    ${XRAY_BITREAD} -F $XRAY_ROI_FRAMES -o design.bits -z -y design.bit
+    ${XRAY_BIT2FASM} --verbose design.bit > design.fasm
+    )
+}
+
+function __go:write_bit() {
+    source ~/src/prjxray/database/artix7/settings.sh
+    bit_out=$1
+    openocd -f $XRAY_DIR/utils/openocd/board-digilent-basys3.cfg -c "init; pld load 0 $bit_out; exit"
+}
+
+function __go:shifter() {
+    if [ -n "$2" ]
+    then
+        cd ${SF_ROOT}/build
+        make dram_shifter_${1}_${2}
+    fi
+    cd ${SF_ROOT}/build/xc7/tests/dram_shifter/dram_shifter_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
+}
+
+function __go:dram() {
+    if [ -n "$2" ]
+    then
+        cd ${SF_ROOT}/build
+        make dram_${1}_${2}
+    fi
+    cd ${SF_ROOT}/build/xc7/tests/dram/dram_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
+}
+
+function __go:set_sf() {
+    export SF_ROOT=$PWD
+}

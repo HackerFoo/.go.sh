@@ -1,0 +1,33 @@
+# -*- mode: sh -*-
+# command line go links
+
+GO_DIR=~/.go.sh
+
+function go() {
+    # indirect call
+    NAME="$1"
+    shift
+    if [ -n "$NAME" ]
+    then
+        __go:$NAME "$@"
+    else
+        __go:commands
+    fi
+}
+
+function __go:commands() {
+    compgen -A function "__go:" | cut -d: -f 2 | tr '\n' ' '
+}
+
+function __go:update() {
+    SRC=`find ${GO_DIR} -type f ! -name '*~' ! -path '*.git*'`
+    source ${SRC}
+    stat -c '%n %y' ${SRC}
+}
+
+function __go:show() {
+    declare -f __go:$1
+}
+
+# update completions
+complete -W "`__go:commands`" go
