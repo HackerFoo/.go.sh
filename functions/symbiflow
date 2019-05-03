@@ -1,16 +1,17 @@
 # -*- mode: sh -*-
 
-function __go:sf() {
-    ( set -ex
+GO(sf) {
+    BLOCK({{
       cd ~/src/symbiflow-arch-defs
-      nix-shell ~/nix/sf-shell.nix )
+      nix-shell ~/nix/sf-shell.nix
+    }})
 }
 
-function __go:bit2vivado() {
+GO(bit2vivado) {
     source ~/src/prjxray/database/artix7/settings.sh
     source ~/src/prjxray/minitests/roi_harness/basys3-swbut.sh
-    ( set -ex
-    cat << 'EOF' > runme.tcl
+    BLOCK({{
+      FILE(runme.tcl, {{
 create_project -force -part $::env(XRAY_PART) design design
 
 read_verilog top_bit.v
@@ -31,38 +32,36 @@ route_design
 
 write_checkpoint -force design.dcp
 write_bitstream -force design.bit
-save_project_as -force design.xpr
-EOF
-    ${XRAY_VIVADO} -source runme.tcl
-    ${XRAY_BITREAD} -F $XRAY_ROI_FRAMES -o design.bits -z -y design.bit
-    ${XRAY_BIT2FASM} --verbose design.bit > design.fasm
-    )
+save_project_as -force design.xpr}})
+      ${XRAY_VIVADO} -source runme.tcl
+      ${XRAY_BITREAD} -F $XRAY_ROI_FRAMES -o design.bits -z -y design.bit
+      ${XRAY_BIT2FASM} --verbose design.bit > design.fasm
+    }})
 }
 
-function __go:write_bit() {
+GO(write_bit) {
     source ~/src/prjxray/database/artix7/settings.sh
-    bit_out=$1
-    openocd -f $XRAY_DIR/utils/openocd/board-digilent-basys3.cfg -c "init; pld load 0 $bit_out; exit"
+    openocd -f $XRAY_DIR/utils/openocd/board-digilent-basys3.cfg -c "init; pld load 0 $1; exit" || return
 }
 
-function __go:shifter() {
+GO(shifter) {
     if [ -n "$2" ]
     then
         cd ${SF_ROOT}/build
-        make dram_shifter_${1}_${2}
+        make dram_shifter_${1}_${2} || return
     fi
     cd ${SF_ROOT}/build/xc7/tests/dram_shifter/dram_shifter_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
 }
 
-function __go:dram() {
+GO(dram) {
     if [ -n "$2" ]
     then
         cd ${SF_ROOT}/build
-        make dram_${1}_${2}
+        make dram_${1}_${2} || return
     fi
     cd ${SF_ROOT}/build/xc7/tests/dram/dram_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
 }
 
-function __go:set_sf() {
+GO(set_sf) {
     export SF_ROOT=$PWD
 }

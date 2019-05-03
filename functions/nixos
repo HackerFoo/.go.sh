@@ -1,5 +1,5 @@
 # -*- mode: sh -*-
 
-function __go:switch() {
+GO(switch) {
     sudo nixos-rebuild switch
 }
