@@ -1,7 +1,7 @@
 # -*- mode: sh -*-
 # command line go links
 
-GO_DIR=~/.go.sh
+__GO_DIR=~/.go.sh
 
 function go() {
     # indirect call
@@ -24,10 +24,12 @@ function __go:show() {
     declare -f __go:$1
 }
 function __go:update() {
-    pushd ${GO_DIR}/functions > /dev/null
-    SRC=`find * -type f ! -name '*~'`
-    source ${SRC}
-    stat -c '%n %y' ${SRC}
+    pushd ${__GO_DIR}/functions > /dev/null
+    for src in `find * -type f ! -name '*~'`
+    do
+        source ${src}
+        stat -c '%n %y' ${src}
+    done
     popd > /dev/null
 
     # update completions
