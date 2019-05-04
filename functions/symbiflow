@@ -44,21 +44,32 @@ GO(write_bit) {
     openocd -f $XRAY_DIR/utils/openocd/board-digilent-basys3.cfg -c "init; pld load 0 $1; exit" || return
 }
 
-GO(shifter) {
-    if [ -n "$2" ]
-    then
-        cd ${SF_ROOT}/build
-        make dram_shifter_${1}_${2} || return
+function __sf_build() {
+    if [ ! -d ${SF_ROOT} ]; then
+        return
+    elif [ ! -d ${SF_ROOT}/build ]; then
+        make -C ${SF_ROOT} env
     fi
+    make -C ${SF_ROOT}/build $@
+}
+
+define({{build_target}}, {{
+    if [ -n "{{$}}$2" ]; then
+        __sf_build $1_{{$}}$2 || return
+    fi}})
+
+GO(shifter) {
+    build_target(dram_shifter_$1, 2)
     cd ${SF_ROOT}/build/xc7/tests/dram_shifter/dram_shifter_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
 }
 
+GO(bshifter) {
+    build_target(bram_shifter, 1)
+    cd ${SF_ROOT}/build/xc7/tests/bram_shifter/bram_shifter/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
+}
+
 GO(dram) {
-    if [ -n "$2" ]
-    then
-        cd ${SF_ROOT}/build
-        make dram_${1}_${2} || return
-    fi
+    build_target(dram_$1, 2)
     cd ${SF_ROOT}/build/xc7/tests/dram/dram_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
 }
 
