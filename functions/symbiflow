@@ -76,3 +76,10 @@ GO(dram) {
 GO(set_sf) {
     export SF_ROOT=$PWD
 }
+
+GO(top_dram_n3) {
+    BLOCK({{
+      __sf_build top_dram_n3_prog
+      ${SF_ROOT}/tests/9-scalable_proc/utils/receiver.py --baud 500000
+    }})
+}
