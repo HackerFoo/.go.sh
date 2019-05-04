@@ -1,0 +1,13 @@
+# -*- mode: sh -*-
+
+GO(link) {
+  BLOCK({{
+    if [ -d functions ]
+    then
+        TARGET="${__GO_DIR}/functions/${PWD##*/}"
+        ln -sin ${PWD}/functions ${TARGET}
+        set +x
+        go update
+    fi
+  }})
+}

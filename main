@@ -25,7 +25,7 @@ function __go:show() {
 }
 function __go:update() {
     pushd ${__GO_DIR}/functions > /dev/null
-    for src in `find * -type f ! -name '*~'`
+    for src in `find -L * -type f ! -name '*~'`
     do
         eval "`m4 ../macros.m4 ${src}`"
         stat -c '%n %y' ${src}
