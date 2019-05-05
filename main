@@ -28,7 +28,8 @@ function __go:update() {
     for src in `find -L * -type f ! -name '*~'`
     do
         eval "`m4 ../macros.m4 ${src}`"
-        stat -c '%n %y' ${src}
+        printf "%15s | " "${src}"
+        date -r ${src}
     done
     popd > /dev/null
 

@@ -1,0 +1,29 @@
+# -*- mode: sh -*-
+
+GO(rsync_gx1) {
+    rsync -rv --ignore-existing /Volumes/GX1/$1/ /Volumes/White/Pictures/GX1/$1/
+}
+
+POPR_DIR=${HOME}/src/poprc
+
+GO(check_popr) {
+    BLOCK({{
+      cd ${POPR_DIR}
+      make clean
+      make BUILD=release
+      make CC=gcc-8 BUILD=release
+    }})
+}
+
+HACKERFOO_DIR=${HOME}/src/hackerfoo
+
+GO(update_popr_eval) {
+    BLOCK({{
+      cd ${POPR_DIR}
+      make clean
+      make js/eval.js BUILD=release-with-asserts
+      cd ${HACKERFOO_DIR}/app_engine
+      cp ${POPR_DIR}/js/eval.{js,wasm} public/js
+      gcloud app deploy
+    }})
+}
