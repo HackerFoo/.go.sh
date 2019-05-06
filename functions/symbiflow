@@ -54,18 +54,30 @@ function __sf_build() {
 }
 
 define({{build_target}}, {{
-    if [ -n "{{$}}$2" ]; then
-        __sf_build $1_{{$}}$2 || return
+    if [ -n "$2" ]; then
+        __sf_build $1_$2 || return
     fi}})
 
 GO(shifter) {
-    build_target(dram_shifter_$1, 2)
+    build_target(dram_shifter_$1, $2)
     cd ${SF_ROOT}/build/xc7/tests/dram_shifter/dram_shifter_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
 }
 
 GO(bshifter) {
-    build_target(bram_shifter, 1)
+    build_target(bram_shifter, $1)
     cd ${SF_ROOT}/build/xc7/tests/bram_shifter/bram_shifter/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
+}
+
+GO(dram_test) {
+    if [ "$2" == "run" ]
+    then
+      build_target(dram_test_$1, prog)
+      cd ${SF_ROOT}/build/xc7/tests/dram_test/dram_test_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
+      python ${SF_ROOT}/xc7/tests/common/read_uart.py --baud 500000 /dev/ttyUSB1
+    else
+      build_target(dram_test_$1, $2)
+      cd ${SF_ROOT}/build/xc7/tests/dram_test/dram_test_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
+    fi
 }
 
 GO(dram) {
