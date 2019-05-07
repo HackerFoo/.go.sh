@@ -71,12 +71,15 @@ GO(bshifter) {
 GO(dram_test) {
     if [ "$2" == "run" ]
     then
-      build_target(dram_test_$1, prog)
-      cd ${SF_ROOT}/build/xc7/tests/dram_test/dram_test_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
-      python ${SF_ROOT}/xc7/tests/common/read_uart.py --baud 500000 /dev/ttyUSB1
+        if [ "$3" != "now" ]
+        then
+            build_target(dram_test_$1, prog)
+        fi
+        cd ${SF_ROOT}/build/xc7/tests/dram_test/dram_test_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
+        python ${SF_ROOT}/xc7/tests/common/read_uart.py --baud 500000 /dev/ttyUSB1
     else
-      build_target(dram_test_$1, $2)
-      cd ${SF_ROOT}/build/xc7/tests/dram_test/dram_test_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
+        build_target(dram_test_$1, $2)
+        cd ${SF_ROOT}/build/xc7/tests/dram_test/dram_test_${1}/artix7-xc7a50t-basys3-roi-virt-xc7a50t-basys3-test
     fi
 }
 
@@ -94,4 +97,9 @@ GO(top_dram_n3) {
       __sf_build top_dram_n3_prog
       ${SF_ROOT}/tests/9-scalable_proc/utils/receiver.py --baud 500000
     }})
+}
+
+GO(serial_port) {
+    stty raw 500000 < /dev/ttyUSB1
+    xxd /dev/ttyUSB1
 }
