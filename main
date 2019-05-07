@@ -1,9 +1,14 @@
 # -*- mode: sh -*-
 # command line go links
 
-__GO_DIR=~/.go.sh
+# The command to invoke
+__GO_CMD=go
 
-function go() {
+__GO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+eval "function ${__GO_CMD}() { __go \$@; }"
+
+function __go() {
     # indirect call
     NAME="$1"
     shift
@@ -19,22 +24,22 @@ function __go:commands() {
     compgen -A function "__go:" | cut -d: -f 2 | tr '\n' ' '
 }
 
-
 function __go:show() {
     declare -f __go:$1
 }
+
 function __go:update() {
     pushd ${__GO_DIR}/functions > /dev/null
     for src in `find -L * -type f ! -name '*~'`
     do
-        eval "`m4 ../macros.m4 ${src}`"
+        eval "`m4 -DGO_CMD=${__GO_CMD} ../macros.m4 ${src}`"
         printf "%15s | " "${src}"
         date -r ${src}
     done
     popd > /dev/null
 
     # update completions
-    complete -W "`__go:commands`" go
+    complete -W "`__go:commands`" ${__GO_CMD}
 }
 
 go update > /dev/null
