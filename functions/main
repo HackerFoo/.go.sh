@@ -1,0 +1,28 @@
+# -*- mode: sh -*-
+# essential functions for .go.sh to operate
+
+function GO_CMD() {
+    # indirect call
+    NAME="$1"
+    shift
+    if [ -n "$NAME" ]
+    then
+        {{__}}GO_CMD:$NAME "$@"
+    else
+        {{__}}GO_CMD:update
+    fi
+}
+
+GO(update) {
+    pushd ${__GO_DIR}/functions > /dev/null
+    for src in `find -L * -type f ! -name '*~'`
+    do
+        eval "`m4 {{-DGO_CMD=}}GO_CMD ../macros.m4 ${src}`"
+        printf "%15s | " "${src}"
+        date -r ${src}
+    done
+    popd > /dev/null
+
+    # update completions
+    complete -W "`{{__}}GO_CMD:commands`" GO_CMD
+}

@@ -1,5 +1,13 @@
 # -*- mode: sh -*-
 
+GO(show) {
+    declare -f {{__}}GO_CMD{{:$1}}
+}
+
+GO(commands) {
+    compgen -A function "{{__}}GO_CMD{{:}}" | cut -d: -f 2 | tr '\n' ' '
+}
+
 GO(link) {
   BLOCK({{
     if [ -d functions ]
@@ -7,7 +15,7 @@ GO(link) {
         TARGET="${__GO_DIR}/functions/${PWD##*/}"
         ln -sin ${PWD}/functions ${TARGET}
         set +x
-        go update
+        GO_CMD update
     fi
   }})
 }

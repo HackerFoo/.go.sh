@@ -1,0 +1,11 @@
+# -*- mode: sh -*-
+# loader for main
+
+# The command to invoke
+__GO_CMD=go
+
+__GO_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+eval "`m4 -DGO_CMD=${__GO_CMD} ${__GO_DIR}/macros.m4 ${__GO_DIR}/functions/main`"
+
+${__GO_CMD} update > /dev/null

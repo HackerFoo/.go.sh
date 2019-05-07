@@ -103,3 +103,10 @@ GO(serial_port) {
     stty raw 500000 < /dev/ttyUSB1
     xxd /dev/ttyUSB1
 }
+
+GO(sf_env) {
+    BLOCK({{
+      cd ${SF_ROOT}
+      make env
+    }})
+}
