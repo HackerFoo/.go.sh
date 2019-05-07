@@ -6,6 +6,8 @@ Simple, but more flexible and easier to manage than aliases.
 
 # Getting Started
 
+Make sure `m4` is installed.
+
     cd ~
     git clone https://github.com/HackerFoo/.go.sh.git
-    source ~/.go.sh/main
+    source ~/.go.sh/load
