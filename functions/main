@@ -18,7 +18,7 @@ GO(update) {
     for src in `find -L * -type f ! -name '*~'`
     do
         eval "`m4 {{-DGO_CMD=}}GO_CMD ../macros.m4 ${src}`"
-        printf "%15s | " "${src}"
+        printf "%40s | " "${src}"
         date -r ${src}
     done
     popd > /dev/null
