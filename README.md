@@ -11,3 +11,5 @@ Make sure `m4` is installed.
     cd ~
     git clone https://github.com/HackerFoo/.go.sh.git
     source ~/.go.sh/load
+
+See [my personal go functions](https://github.com/HackerFoo/hackerfoo-go-functions) for examples.
