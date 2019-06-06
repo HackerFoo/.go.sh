@@ -24,5 +24,5 @@ GO(update) {
     popd > /dev/null
 
     # update completions
-    complete -W "`{{__}}GO_CMD:commands`" GO_CMD
+    complete -W "`{{__}}GO_CMD:commands`" -A file GO_CMD
 }
