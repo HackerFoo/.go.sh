@@ -14,3 +14,4 @@ define({{WITH_SHOPT}},
          shopt -u $1
          shopt -s {{$}}{__shopts//:/ }
          unset __shopts;}})dnl
+define({{GO_CALL}}, {{__}}GO_CMD:$1)dnl
