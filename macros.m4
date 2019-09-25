@@ -24,12 +24,13 @@ dnl wrap Python into a go function
 define({{GOPY}}, {{__END}}
 {{define({{__END}}, {{__END_PYTHON}})d}}{{nl}}
 {{function {{__}}GO_CMD:$1()}}OPENBRACE
-{{python <{{}}OPENPAREN{{}}cat << EOF
-if True:}})dnl
+{{python <{{}}OPENPAREN{{}}cat << 'EOF'
+def go(argv):}})dnl
 dnl
 dnl end of a Python wrapper
 define({{__END_PYTHON}}, {{
 EOF
+echo "go(\"${{}}@\".split())"
 CLOSEPAREN
 CLOSEBRACE}})dnl
 dnl
