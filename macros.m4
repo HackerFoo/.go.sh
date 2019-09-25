@@ -61,3 +61,6 @@ define({{GO_CALL}}, {{__}}GO_CMD:$1)dnl
 dnl
 dnl format is a common identifier, so undefine m4's format
 undefine({{format}})dnl
+dnl
+dnl close remaining braces
+m4wrap({{__END}})
