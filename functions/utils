@@ -1,14 +1,12 @@
 # -*- mode: sh -*-
 
-GO(show) {
+GO(show)
     declare -f {{__}}GO_CMD{{:$1}}
-}
 
-GO(commands) {
+GO(commands)
     compgen -A function "{{__}}GO_CMD{{:}}" | cut -d: -f 2 | tr '\n' ' '
-}
 
-GO(link) {
+GO(link)
   BLOCK({{
     if [ -d functions ]
     then
@@ -18,4 +16,3 @@ GO(link) {
         GO_CMD update
     fi
   }})
-}

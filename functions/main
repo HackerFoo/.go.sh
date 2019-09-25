@@ -13,11 +13,11 @@ function GO_CMD() {
     fi
 }
 
-GO(update) {
+GO(update)
     pushd ${__GO_DIR}/functions > /dev/null
     for src in `find -L * -type f ! -name '*~'`
     do
-        eval "`m4 {{-DGO_CMD=}}GO_CMD ../macros.m4 ${src}`"
+        eval "`m4 {{-DGO_CMD=}}GO_CMD ../macros.m4 ${src} ../end.m4`"
         printf "%40s | " "${src}"
         date -r ${src}
     done
@@ -25,4 +25,3 @@ GO(update) {
 
     # update completions
     complete -W "`GO_CALL(commands)`" -A file GO_CMD
-}
